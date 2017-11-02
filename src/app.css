@@ -1,0 +1,40 @@
+.subscript {
+    font-size: 12px;
+}
+
+.add,
+.button,
+.die,
+.stat,
+.combo {
+    margin-bottom: 5px;
+}
+
+.die:hover .die-result,
+.die:hover .die-delete,
+.add:hover .tag {
+    cursor: pointer;
+}
+
+.add-name {
+    width: 100px;
+}
+
+.die-result {
+    background-color: #fff;
+    color: #363636;
+    border: solid 1px #363636;
+    width: 41px;
+    height: 26px;
+    line-height: 24px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.die-details {
+    width: 100px;
+}
+
+.stat .tag {
+    width: 120px;
+}
