@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Chance from 'chance'
 import './app.css'
+import Rules from './rules'
 
 const chance = Chance()
 
@@ -23,14 +24,14 @@ Add.propTypes = {
   children: PropTypes.any.isRequired
 }
 
-const Die = ({children, result, onRoll, onRemove}) => <div className='die'>
+const Die = ({children, result, onRoll, onRemove, count}) => <div className='die'>
   <div className='tags has-addons'>
     <span className='die-delete tag is-danger is-medium is-delete' onClick={onRemove} />
     <span className='die-details tag is-link is-medium'>
       {children}
     </span>
     <div className='tag is-link is-medium'>
-      <button onClick={onRoll} className='die-result'>{result}</button>
+      <button onClick={onRoll} className={`die-result die-result-${count}`}>{result}</button>
     </div>
   </div>
 </div>
@@ -39,7 +40,8 @@ Die.propTypes = {
   children: PropTypes.any.isRequired,
   result: PropTypes.number.isRequired,
   onRoll: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired
+  onRemove: PropTypes.func.isRequired,
+  count: PropTypes.number.isRequired
 }
 
 const Stat = ({children}) => <div className='stat'>
@@ -95,7 +97,9 @@ class App extends Component {
     this.state = {
       dice: [],
       average: 0,
-      sum: 0
+      sum: 0,
+      min: 0,
+      max: 0
     }
   }
   update (dice) {
@@ -103,11 +107,17 @@ class App extends Component {
       return sum + current.result
     }, 0)
     const average = Math.round(sum / dice.length) || 0
-    this.setState({dice, sum, average})
+    let max = Math.max(...dice.map(d => d.result))
+    max = max === Infinity || max === -Infinity ? 0 : max
+    let min = Math.min(...dice.map(d => d.result))
+    min = min === Infinity || min === -Infinity ? 0 : min
+    this.setState({dice, sum, average, max, min})
   }
   rollAll () {
     const dice = this.state.dice.map(die => {
       die.result = Dice[die.size].roll()
+      die.count += 1
+      die.count = die.count % 2
       return die
     })
     this.update(dice)
@@ -116,6 +126,8 @@ class App extends Component {
     const dice = [].concat(this.state.dice)
     const die = dice[index]
     die.result = Dice[die.size].roll()
+    die.count += 1
+    die.count = die.count % 2
     dice[index] = die
     this.update(dice)
   }
@@ -124,7 +136,8 @@ class App extends Component {
     dice.push({
       size,
       label: Dice[size].label,
-      result: Dice[size].roll()
+      result: Dice[size].roll(),
+      count: 0
     })
     this.update(dice)
   }
@@ -169,6 +182,7 @@ class App extends Component {
                 </button>
                 {this.state.dice.map((die, index) => <Die
                   key={`die-${die.size}-${index}`}
+                  count={die.count}
                   result={die.result}
                   onRoll={() => { this.roll(index) }}
                   onRemove={() => { this.remove(index) }}>{die.label}
@@ -182,9 +196,14 @@ class App extends Component {
                 </h2>
                 <Stat>Sum {this.state.sum}</Stat>
                 <Stat>Average {this.state.average}</Stat>
+                <Stat>Min {this.state.min}</Stat>
+                <Stat>Max {this.state.max}</Stat>
               </div>
             </div>
           </div>
+        </section>
+        <section className='section'>
+          <Rules />
         </section>
       </div>
     )
