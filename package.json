@@ -3,10 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "bulma": "^0.6.0",
+    "@blank-string/components": "^1.0.0",
     "chance": "^1.0.12",
     "font-awesome": "^4.7.0",
-    "normalize.css": "^7.0.0",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
